@@ -1,4 +1,5 @@
 import Home from "./views/Home/Home"
+import MisTurnos from "./views/Home/Mis turnos/MisTurnos"
 
 function App() {
   
@@ -7,6 +8,7 @@ function App() {
     <>
        <h1>Hola Mundo</h1>
        <Home /> 
+       <MisTurnos />
     </>
   )
 }

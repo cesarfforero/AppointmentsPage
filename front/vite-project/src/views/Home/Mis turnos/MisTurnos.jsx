@@ -1,11 +1,23 @@
-import { useState } from "react"
-import myAppointments from "../../../helpers/myAppointments"
+import { useEffect, useState } from "react"
 import Turno from "../../../components/Turno/Turno"
 import Styles from "./Misturnos.module.css"
+import axios from "axios"
 
 function MisTurnos (){
 
-    const [apps, setApp] = useState(myAppointments)
+    const [appointments, setAppointments ] = useState([])
+
+    useEffect(() => {
+
+        setTimeout(() => {
+        axios.get("http://localhost: 3000/appointments/")
+        .then(({data}) => {
+            setAppointments(data.data)
+        })
+        .catch(err => err)
+    },3000);
+        
+    }, [])
 
     return (
         <div className={Styles.container}>
@@ -16,7 +28,7 @@ function MisTurnos (){
 
             <div className={Styles.container}>
         
-            {apps.map(Turno =>
+            {appointments.length > 0 ? appointments?.map(Turno =>
                 <Turno
                     key={Turno.key}
                     id={Turno.id}
@@ -24,7 +36,7 @@ function MisTurnos (){
                     time={Turno.time}
                     status={Turno.status}
                     />
-            )
+            ): (<h1>Cargando...</h1>)
         }    
             </div>
         </div>

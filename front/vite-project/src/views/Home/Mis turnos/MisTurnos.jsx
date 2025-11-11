@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import Turno from "../../../components/Turno/Turno"
 import Styles from "./Misturnos.module.css"
 import axios from "axios"
+import URLBase from "../../../config/urlBase"
 
 function MisTurnos (){
 
@@ -10,7 +11,7 @@ function MisTurnos (){
     useEffect(() => {
 
         setTimeout(() => {
-        axios.get("http://localhost: 3000/appointments/")
+        axios.get(`${URLBase}appointments/`)
         .then(({data}) => {
             setAppointments(data.data)
         })

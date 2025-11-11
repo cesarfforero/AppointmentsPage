@@ -9,6 +9,8 @@ function App() {
        <h1>Hola Mundo</h1>
        <Home /> 
        <MisTurnos />
+       <Register />
+       <Login />
     </>
   )
 }

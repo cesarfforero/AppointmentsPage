@@ -21,8 +21,8 @@ export default function MyAppointments() {
 
   // Ordenar turnos por fecha de inicio (más cercano primero)
   const sortedAppointments = [...appointments].sort((a, b) => {
-    const aDate = new Date(a.startAt || a.startsAt).getTime();
-    const bDate = new Date(b.startAt || b.startsAt).getTime();
+    const aDate = new Date(a.startsAt || a.startAt).getTime();
+    const bDate = new Date(b.startsAt || b.startAt).getTime();
     return aDate - bDate;
   });
 
@@ -53,7 +53,9 @@ export default function MyAppointments() {
         </div>
 
         {loading && (
-          <div className="info-box">Cargando tus turnos de realidad virtual…</div>
+          <div className="info-box">
+            Cargando tus turnos de realidad virtual…
+          </div>
         )}
 
         {successMessage && !loading && (

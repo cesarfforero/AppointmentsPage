@@ -5,7 +5,7 @@ export default function AppointmentCard({
   onCancel,
   isDeleting = false,
 }) {
-  const start = new Date(appointment.startAt || appointment.startsAt);
+  const start = new Date(appointment.startsAt || appointment.startAt);
   const end = new Date(appointment.endsAt);
 
   const durationMinutes = Math.round((end - start) / (1000 * 60));
@@ -28,7 +28,6 @@ export default function AppointmentCard({
     year: "numeric",
   });
 
-  // Capitalizar la primera letra
   const dateLabelPretty =
     dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1);
 
@@ -43,6 +42,12 @@ export default function AppointmentCard({
         isDeleting ? "card-appointment-deleting" : ""
       }`}
     >
+      <div className="card-appointment-icon">
+        <span role="img" aria-label="VR">
+          🕶️
+        </span>
+      </div>
+
       <div className="card-appointment-main">
         <div className="card-appointment-date">{dateLabelPretty}</div>
 

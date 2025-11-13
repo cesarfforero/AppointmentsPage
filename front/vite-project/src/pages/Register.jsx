@@ -13,17 +13,18 @@ const validationSchema = Yup.object({
     .required("El correo es obligatorio"),
   username: Yup.string().required("El usuario es obligatorio"),
   password: Yup.string()
-    .min(6, "La contraseña debe tener al menos 6 caracteres")
+    .min(8, "La contraseña debe tener al menos 8 caracteres")
     .required("La contraseña es obligatoria"),
   nDni: Yup.number()
     .typeError("El documento debe ser numérico")
     .integer("El documento debe ser un número entero")
     .required("El documento es obligatorio"),
-  birthdate: Yup.string().nullable(),
+  birthday: Yup.string().nullable(),
 });
 
 export default function Register() {
-  const { register, loading, authError, setAuthError, isAuthenticated } = useAuth();
+  const { register, loading, authError, setAuthError, isAuthenticated } =
+    useAuth();
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -40,16 +41,18 @@ export default function Register() {
       username: "",
       password: "",
       nDni: "",
-      birthdate: "",
+      birthday: "",
     },
     validationSchema,
     onSubmit: async (values) => {
       setAuthError(null);
+
       const payload = {
         ...values,
         nDni: Number(values.nDni),
-        birthdate: values.birthdate || null,
+        birthday: values.birthday || null,
       };
+
       const ok = await register(payload);
       if (ok) {
         navigate("/login", { replace: true });
@@ -184,20 +187,20 @@ export default function Register() {
           </div>
 
           <div className="form-row">
-            <label htmlFor="birthdate" className="label">
+            <label htmlFor="birthday" className="label">
               Fecha de nacimiento (opcional)
             </label>
             <input
-              id="birthdate"
-              name="birthdate"
+              id="birthday"
+              name="birthday"
               type="date"
               className="input"
-              value={formik.values.birthdate}
+              value={formik.values.birthday}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            {formik.touched.birthdate && formik.errors.birthdate && (
-              <span className="error-text">{formik.errors.birthdate}</span>
+            {formik.touched.birthday && formik.errors.birthday && (
+              <span className="error-text">{formik.errors.birthday}</span>
             )}
           </div>
 
@@ -215,8 +218,7 @@ export default function Register() {
             </button>
 
             <div className="form-helper">
-              ¿Ya tienes cuenta?{" "}
-              <Link to="/login">Inicia sesión</Link>
+              ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
             </div>
           </div>
         </form>

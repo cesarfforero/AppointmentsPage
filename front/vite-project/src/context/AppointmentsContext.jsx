@@ -6,7 +6,7 @@ import { useAuth } from "./AuthContext";
 const AppointmentsContext = createContext(null);
 
 export function AppointmentsProvider({ children }) {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [apptError, setApptError] = useState(null);
@@ -59,8 +59,15 @@ export function AppointmentsProvider({ children }) {
       }
 
       const data = await res.json();
-      setAppointments(Array.isArray(data) ? data : []);
-    } catch (error) {
+      const all =Array.isArray(data) ? data : [];
+      const mine = all.filter(
+        (appt) =>
+          appt?.user?.credential?.username === user.username &&
+          (appt.status ?? "active") === "active"
+      );
+      setAppointments(mine);
+
+    }catch (error) {
       console.error("Error de red al cargar turnos:", error);
       setApptError("Error de conexión al cargar tus turnos.");
     } finally {
@@ -71,6 +78,13 @@ export function AppointmentsProvider({ children }) {
   async function createAppointment({ startsAt, endsAt }) {
     if (!token) {
       setApptError("Debes iniciar sesión para crear un turno.");
+      return false;
+    }
+
+    if (!user || !user.id) {
+      setApptError(
+        "No se pudo determinar el usuario actual. Vuelve a iniciar sesión."
+      );
       return false;
     }
 
@@ -85,7 +99,11 @@ export function AppointmentsProvider({ children }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ startAt: startsAt, endsAt }),
+        body: JSON.stringify({
+          userId: user.id, // 🔹 el back espera userId
+          startsAt,        // 🔹 nombre correcto con "s"
+          endsAt,
+        }),
       });
 
       if (!res.ok) {
@@ -142,13 +160,11 @@ export function AppointmentsProvider({ children }) {
     setSuccessMessage(null);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/appointments/cancel`, {
-        method: "POST",
+      const res = await fetch(`${API_BASE_URL}/appointments/cancel/${id}`, {
+        method: "PUT",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ id }),
       });
 
       if (!res.ok) {

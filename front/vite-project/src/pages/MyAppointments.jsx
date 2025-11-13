@@ -1,49 +1,89 @@
-import React, { useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import React, { useEffect, useState } from "react";
 import { useAppointments } from "../context/AppointmentsContext";
 import AppointmentCard from "../components/AppointmentCard";
 
 export default function MyAppointments() {
-  const { isAuthenticated } = useAuth();
-  const { appointments, loading, apptError, fetchMyAppointments } = useAppointments();
+  const {
+    appointments,
+    loading,
+    apptError,
+    successMessage,
+    fetchMyAppointments,
+    cancelAppointment,
+  } = useAppointments();
+
+  const [deletingIds, setDeletingIds] = useState([]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchMyAppointments();
-    }
-  }, [isAuthenticated, fetchMyAppointments]);
+    fetchMyAppointments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  if (!isAuthenticated) {
-    return (
-      <div className="card">
-        <h1>Inicia sesión</h1>
-        <p>Debes iniciar sesión para ver tus turnos.</p>
-      </div>
-    );
-  }
+  // Ordenar turnos por fecha de inicio (más cercano primero)
+  const sortedAppointments = [...appointments].sort((a, b) => {
+    const aDate = new Date(a.startAt || a.startsAt).getTime();
+    const bDate = new Date(b.startAt || b.startsAt).getTime();
+    return aDate - bDate;
+  });
+
+  const handleCancelWithAnimation = (id) => {
+    // Marcamos el turno como "eliminándose" para animación
+    setDeletingIds((prev) => [...prev, id]);
+
+    // Esperamos un poco para que la animación corra,
+    // y luego sí llamamos al cancelAppointment del contexto
+    setTimeout(() => {
+      cancelAppointment(id);
+      setDeletingIds((prev) => prev.filter((currId) => currId !== id));
+    }, 250); // 250ms = mismo tiempo que el CSS
+  };
 
   return (
-    <div className="card">
-      <div className="heading">
-        <h1>Mis turnos</h1>
-        <p>Consulta las partidas que has agendado.</p>
-      </div>
-
-      {loading && <p>Cargando tus turnos...</p>}
-
-      {apptError && <div className="error-text">{apptError}</div>}
-
-      {!loading && !apptError && appointments.length === 0 && (
-        <div className="list-empty">
-          <p>Aún no tienes turnos creados.</p>
-          <p style={{ marginTop: "0.25rem" }}>Crea tu primer turno desde “Crear turno”.</p>
+    <div className="app-main-inner">
+      <div className="card">
+        <div className="heading">
+          <div className="heading-title">
+            MIS TURNOS VR
+            <span className="heading-title-pill">AGENDA</span>
+          </div>
+          <p className="heading-subtitle">
+            Revisa tus turnos reservados en la arena de realidad virtual. No
+            llegues tarde o perderás tu sesión en el atardecer neon.
+          </p>
         </div>
-      )}
 
-      <div className="appointments-list">
-        {appointments.map((appt) => (
-          <AppointmentCard key={appt.id} appointment={appt} />
-        ))}
+        {loading && (
+          <div className="info-box">Cargando tus turnos de realidad virtual…</div>
+        )}
+
+        {successMessage && !loading && (
+          <div className="success-box">{successMessage}</div>
+        )}
+
+        {apptError && !loading && (
+          <div className="error-box">{apptError}</div>
+        )}
+
+        {!loading && !apptError && sortedAppointments.length === 0 && (
+          <div className="info-box">
+            Aún no tienes turnos creados. Crea tu primer turno de realidad
+            virtual desde el botón &quot;Crear turno&quot; en la parte
+            superior.
+          </div>
+        )}
+
+        {!loading && !apptError && sortedAppointments.length > 0 && (
+          <div className="appointments-grid">
+            {sortedAppointments.map((appt) => (
+              <AppointmentCard
+                key={appt.id}
+                appointment={appt}
+                onCancel={handleCancelWithAnimation}
+                isDeleting={deletingIds.includes(appt.id)}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

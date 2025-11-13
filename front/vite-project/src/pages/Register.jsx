@@ -1,17 +1,34 @@
-import React, { useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+// src/pages/Register.jsx
+import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+
+const validationSchema = Yup.object({
+  nombre: Yup.string().required("El nombre es obligatorio"),
+  apellido: Yup.string().required("El apellido es obligatorio"),
+  email: Yup.string()
+    .email("Ingrese un correo válido")
+    .required("El correo es obligatorio"),
+  username: Yup.string().required("El usuario es obligatorio"),
+  password: Yup.string()
+    .min(6, "La contraseña debe tener al menos 6 caracteres")
+    .required("La contraseña es obligatoria"),
+  nDni: Yup.number()
+    .typeError("El documento debe ser numérico")
+    .integer("El documento debe ser un número entero")
+    .required("El documento es obligatorio"),
+  birthdate: Yup.string().nullable(),
+});
 
 export default function Register() {
   const { register, loading, authError, setAuthError, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  // Si ya está logueado, no tiene sentido estar en /register
-  useEffect(() => {
+  React.useEffect(() => {
     if (isAuthenticated) {
-      navigate("/appointments/me");
+      navigate("/appointments/me", { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -23,200 +40,187 @@ export default function Register() {
       username: "",
       password: "",
       nDni: "",
-      birthdate: ""
+      birthdate: "",
     },
-    validationSchema: Yup.object({
-      nombre: Yup.string().required("El nombre es obligatorio"),
-      apellido: Yup.string().required("El apellido es obligatorio"),
-      email: Yup.string().email("Correo no válido").required("El correo es obligatorio"),
-      username: Yup.string().required("El usuario es obligatorio"),
-      password: Yup.string()
-        .min(6, "Mínimo 6 caracteres")
-        .required("La contraseña es obligatoria"),
-      nDni: Yup.number()
-        .typeError("El DNI debe ser un número")
-        .integer("Debe ser un número entero")
-        .required("El DNI es obligatorio"),
-      // birthdate la dejamos opcional, por si en el back no es requerida
-      birthdate: Yup.string().nullable()
-    }),
+    validationSchema,
     onSubmit: async (values) => {
       setAuthError(null);
-
-      // nDni como número real
       const payload = {
-        nombre: values.nombre,
-        apellido: values.apellido,
-        email: values.email,
-        username: values.username,
-        password: values.password,
+        ...values,
         nDni: Number(values.nDni),
-        // solo mandamos birthdate si viene
-        ...(values.birthdate ? { birthdate: values.birthdate } : {})
+        birthdate: values.birthdate || null,
       };
-
       const ok = await register(payload);
       if (ok) {
-        navigate("/login");
+        navigate("/login", { replace: true });
       }
-    }
+    },
   });
 
   return (
-    <div className="card">
-      <div className="heading">
-        <h1>Crea tu cuenta</h1>
-        <p>Regístrate para gestionar tus turnos de paintball.</p>
-      </div>
-      <form onSubmit={formik.handleSubmit}>
-        {/* Nombre */}
-        <div className="form-row">
-          <label className="label" htmlFor="nombre">
-            Nombre
-          </label>
-          <input
-            className="input"
-            id="nombre"
-            name="nombre"
-            placeholder="Tu nombre"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.nombre}
-          />
-          {formik.touched.nombre && formik.errors.nombre && (
-            <div className="error-text">{formik.errors.nombre}</div>
-          )}
+    <div className="app-main-inner">
+      <div className="card">
+        <div className="heading">
+          <div className="heading-title">
+            Crea tu cuenta
+            <span className="heading-title-pill">New Player</span>
+          </div>
+          <p className="heading-subtitle">
+            Regístrate para reservar turnos de realidad virtual en nuestra arena
+            tropical inspirada en los neones de la ciudad.
+          </p>
         </div>
 
-        {/* Apellido */}
-        <div className="form-row">
-          <label className="label" htmlFor="apellido">
-            Apellido
-          </label>
-          <input
-            className="input"
-            id="apellido"
-            name="apellido"
-            placeholder="Tu apellido"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.apellido}
-          />
-          {formik.touched.apellido && formik.errors.apellido && (
-            <div className="error-text">{formik.errors.apellido}</div>
-          )}
-        </div>
+        <form onSubmit={formik.handleSubmit} className="form-grid">
+          <div className="form-row">
+            <label htmlFor="nombre" className="label">
+              Nombre
+            </label>
+            <input
+              id="nombre"
+              name="nombre"
+              type="text"
+              className="input"
+              value={formik.values.nombre}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {formik.touched.nombre && formik.errors.nombre && (
+              <span className="error-text">{formik.errors.nombre}</span>
+            )}
+          </div>
 
-        {/* Email */}
-        <div className="form-row">
-          <label className="label" htmlFor="email">
-            Correo electrónico
-          </label>
-          <input
-            className="input"
-            id="email"
-            name="email"
-            placeholder="tucorreo@ejemplo.com"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.email}
-          />
-          {formik.touched.email && formik.errors.email && (
-            <div className="error-text">{formik.errors.email}</div>
-          )}
-        </div>
+          <div className="form-row">
+            <label htmlFor="apellido" className="label">
+              Apellido
+            </label>
+            <input
+              id="apellido"
+              name="apellido"
+              type="text"
+              className="input"
+              value={formik.values.apellido}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {formik.touched.apellido && formik.errors.apellido && (
+              <span className="error-text">{formik.errors.apellido}</span>
+            )}
+          </div>
 
-        {/* Usuario */}
-        <div className="form-row">
-          <label className="label" htmlFor="username">
-            Usuario
-          </label>
-          <input
-            className="input"
-            id="username"
-            name="username"
-            placeholder="Nombre de usuario"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.username}
-          />
-          {formik.touched.username && formik.errors.username && (
-            <div className="error-text">{formik.errors.username}</div>
-          )}
-        </div>
+          <div className="form-row">
+            <label htmlFor="email" className="label">
+              Correo electrónico
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              className="input"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              autoComplete="email"
+            />
+            {formik.touched.email && formik.errors.email && (
+              <span className="error-text">{formik.errors.email}</span>
+            )}
+          </div>
 
-        {/* Contraseña */}
-        <div className="form-row">
-          <label className="label" htmlFor="password">
-            Contraseña
-          </label>
-          <input
-            className="input"
-            type="password"
-            id="password"
-            name="password"
-            placeholder="••••••••"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.password}
-          />
-          {formik.touched.password && formik.errors.password && (
-            <div className="error-text">{formik.errors.password}</div>
-          )}
-        </div>
+          <div className="form-row">
+            <label htmlFor="username" className="label">
+              Usuario
+            </label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              className="input"
+              value={formik.values.username}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              autoComplete="username"
+            />
+            {formik.touched.username && formik.errors.username && (
+              <span className="error-text">{formik.errors.username}</span>
+            )}
+          </div>
 
-        {/* DNI */}
-        <div className="form-row">
-          <label className="label" htmlFor="nDni">
-            DNI / Documento
-          </label>
-          <input
-            className="input"
-            id="nDni"
-            name="nDni"
-            placeholder="12345678"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.nDni}
-          />
-          {formik.touched.nDni && formik.errors.nDni && (
-            <div className="error-text">{formik.errors.nDni}</div>
-          )}
-        </div>
+          <div className="form-row">
+            <label htmlFor="password" className="label">
+              Contraseña
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              className="input"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              autoComplete="new-password"
+            />
+            {formik.touched.password && formik.errors.password && (
+              <span className="error-text">{formik.errors.password}</span>
+            )}
+          </div>
 
-        {/* Fecha de nacimiento (opcional) */}
-        <div className="form-row">
-          <label className="label" htmlFor="birthdate">
-            Fecha de nacimiento (opcional)
-          </label>
-          <input
-            className="input"
-            id="birthdate"
-            name="birthdate"
-            type="date"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.birthdate}
-          />
-          {formik.touched.birthdate && formik.errors.birthdate && (
-            <div className="error-text">{formik.errors.birthdate}</div>
-          )}
-        </div>
+          <div className="form-row">
+            <label htmlFor="nDni" className="label">
+              Documento (nDni)
+            </label>
+            <input
+              id="nDni"
+              name="nDni"
+              type="text"
+              className="input"
+              value={formik.values.nDni}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {formik.touched.nDni && formik.errors.nDni && (
+              <span className="error-text">{formik.errors.nDni}</span>
+            )}
+          </div>
 
-        {authError && <div className="error-text">{authError}</div>}
+          <div className="form-row">
+            <label htmlFor="birthdate" className="label">
+              Fecha de nacimiento (opcional)
+            </label>
+            <input
+              id="birthdate"
+              name="birthdate"
+              type="date"
+              className="input"
+              value={formik.values.birthdate}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {formik.touched.birthdate && formik.errors.birthdate && (
+              <span className="error-text">{formik.errors.birthdate}</span>
+            )}
+          </div>
 
-        <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <button className="btn" type="submit" disabled={loading}>
-            {loading ? "Creando cuenta..." : "Registrarme"}
-          </button>
-          <Link to="/login">
-            <button type="button" className="btn-secondary">
-              Ya tengo cuenta
+          {authError && <div className="error-box">{authError}</div>}
+
+          <div className="form-actions">
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={loading || formik.isSubmitting}
+            >
+              {loading || formik.isSubmitting
+                ? "Creando cuenta..."
+                : "Crear cuenta"}
             </button>
-          </Link>
-        </div>
-      </form>
+
+            <div className="form-helper">
+              ¿Ya tienes cuenta?{" "}
+              <Link to="/login">Inicia sesión</Link>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
-

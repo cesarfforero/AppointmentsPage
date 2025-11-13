@@ -1,28 +1,57 @@
+/* src/styles.css */
+
+/* Reset básico y tipografía */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-bg-gradient-top: #1b0b3b;
+  --color-bg-gradient-bottom: #2d0840;
+  --color-primary: #ff7a37;
+  --color-primary-soft: #ffb38a;
+  --color-secondary: #8a2be2;
+  --color-accent: #ff4e8a;
+  --color-accent-soft: #ff9ac3;
+  --color-success: #1ed5a9;
+  --color-success-soft: rgba(30, 213, 169, 0.15);
+  --color-error: #ff4b5c;
+  --color-error-soft: rgba(255, 75, 92, 0.15);
+  --color-text-main: #fdf9ff;
+  --color-text-muted: #c9b8ff;
+  --color-card-bg: rgba(19, 10, 40, 0.95);
+  --color-card-border: rgba(255, 255, 255, 0.08);
+
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.5);
+  --shadow-neon: 0 0 20px rgba(255, 122, 55, 0.5);
+
+  --transition-fast: 0.18s ease-out;
+  --transition-normal: 0.28s ease-out;
+
+  --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
 }
 
 body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #050910;
-  color: #f9fafb;
+  font-family: var(--font-main);
+  color: var(--color-text-main);
+  background: radial-gradient(circle at top, #3a0ca3 0%, #2d0840 40%, #050312 100%);
+  background-attachment: fixed;
 }
 
-a {
-  color: #38bdf8;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-button {
-  font-family: inherit;
-}
+/* --- Layout general --- */
 
 .app-shell {
   min-height: 100vh;
@@ -32,121 +61,514 @@ button {
 
 .app-main {
   flex: 1;
-  max-width: 960px;
-  margin: 0 auto;
-  width: 100%;
-  padding: 1.5rem 1rem 2.5rem;
+  display: flex;
+  justify-content: center;
+  padding: 32px 16px 40px;
 }
+
+.app-main-inner {
+  width: 100%;
+  max-width: 960px;
+}
+
+/* --- Navbar: vibes GTA tropical / VR --- */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(16px);
+  background: linear-gradient(
+    90deg,
+    rgba(5, 3, 18, 0.92),
+    rgba(44, 9, 80, 0.9),
+    rgba(5, 3, 18, 0.92)
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.navbar-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.navbar-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: conic-gradient(
+    from 200deg,
+    #ff7a37,
+    #ff4e8a,
+    #8a2be2,
+    #3a0ca3,
+    #ff7a37
+  );
+  box-shadow: 0 0 18px rgba(255, 122, 55, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.navbar-title-wrap {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.navbar-title {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.navbar-subtitle {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.navbar-spacer {
+  flex: 1;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-username {
+  font-size: 13px;
+  color: var(--color-primary-soft);
+}
+
+/* --- Cards / contenedor central --- */
 
 .card {
-  background: #0b1220;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  border: 1px solid #1f2937;
+  background: var(--color-card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-card-border);
+  box-shadow: var(--shadow-soft);
+  padding: 24px 22px;
+  backdrop-filter: blur(12px);
 }
 
-.card + .card {
-  margin-top: 1rem;
+/* --- Heading (título + descripción) --- */
+
+.heading {
+  margin-bottom: 20px;
 }
 
-.input {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid #4b5563;
-  background: #020617;
-  color: #f9fafb;
-  outline: none;
+.heading-title {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.input:focus {
-  border-color: #38bdf8;
+.heading-title-pill {
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: rgba(138, 43, 226, 0.2);
+  border: 1px solid rgba(255, 122, 55, 0.6);
+}
+
+.heading-subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* --- Formulario --- */
+
+.form-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .label {
-  font-size: 0.875rem;
-  margin-bottom: 0.25rem;
-  display: block;
+  font-size: 13px;
+  font-weight: 500;
 }
 
+.input {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(8, 5, 26, 0.85);
+  color: var(--color-text-main);
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+    background var(--transition-fast), transform 0.08s ease-out;
+}
+
+.input::placeholder {
+  color: rgba(201, 184, 255, 0.65);
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px rgba(255, 122, 55, 0.6);
+  background: rgba(12, 7, 36, 0.98);
+  transform: translateY(-1px);
+}
+
+/* --- Botones --- */
+
 .btn {
-  border-radius: 9999px;
-  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
   border: none;
-  background: #38bdf8;
-  color: #020617;
-  font-weight: 600;
+  font-size: 14px;
+  padding: 9px 18px;
   cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-}
-
-.btn:hover {
-  background: #0ea5e9;
-}
-
-.btn-secondary {
-  background: transparent;
-  border: 1px solid #4b5563;
-  color: #e5e7eb;
-}
-
-.btn-secondary:hover {
-  border-color: #9ca3af;
-}
-
-.btn-danger {
-  background: #ef4444;
-  color: #f9fafb;
-}
-
-.btn-danger:hover {
-  background: #dc2626;
+  gap: 6px;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+    background var(--transition-normal), color var(--transition-normal), opacity 0.1s ease-out;
 }
 
 .btn:disabled {
   opacity: 0.6;
-  cursor: not-allowed;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
 }
 
-.form-row {
-  margin-bottom: 0.75rem;
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: #050312;
+  box-shadow: var(--shadow-neon);
 }
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 0 24px rgba(255, 122, 55, 0.85);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-primary-soft);
+  border: 1px solid rgba(255, 122, 55, 0.4);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.btn-danger {
+  background: rgba(255, 75, 92, 0.16);
+  color: var(--color-error);
+  border: 1px solid rgba(255, 75, 92, 0.7);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: rgba(255, 75, 92, 0.26);
+}
+
+/* --- Mensajes de estado --- */
 
 .error-text {
-  color: #f97373;
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
+  font-size: 12px;
+  color: var(--color-error);
+}
+
+.error-box {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--color-error-soft);
+  color: var(--color-error);
+  font-size: 13px;
 }
 
 .success-text {
-  color: #4ade80;
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
+  font-size: 12px;
+  color: var(--color-success);
 }
 
-.heading {
-  margin-bottom: 1rem;
+.success-box {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--color-success-soft);
+  color: var(--color-success);
+  font-size: 13px;
 }
 
-.heading h1 {
-  margin: 0;
-  font-size: 1.75rem;
+/* --- Layout de acciones / enlaces --- */
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
 }
 
-.heading p {
-  margin: 0.25rem 0 0;
-  color: #9ca3af;
-  font-size: 0.9rem;
+.form-helper {
+  font-size: 12px;
+  color: var(--color-text-muted);
 }
 
-.list-empty {
-  text-align: center;
-  color: #9ca3af;
-  padding: 2rem 1rem;
+.form-helper a {
+  color: var(--color-primary-soft);
+  text-decoration: none;
 }
+
+.form-helper a:hover {
+  text-decoration: underline;
+}
+
+/* --- Lista de turnos --- */
 
 .appointments-list {
-  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
 }
+
+/* --- Card de turno --- */
+
+.appointment-card {
+ position: relative;
+  border-radius: 20px;
+  padding: 28px 26px;
+  backdrop-filter: blur(18px);
+  background: rgba(15, 5, 35, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 0 22px rgba(255, 122, 55, 0.20),
+    0 0 32px rgba(138, 43, 226, 0.25),
+    inset 0 0 24px rgba(255, 255, 255, 0.04);
+  transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
+}
+
+.appointment-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 28px rgba(255, 122, 55, 0.35),
+    0 0 40px rgba(138, 43, 226, 0.40),
+    inset 0 0 28px rgba(255, 255, 255, 0.06);
+}
+
+.appointment-card::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 122, 55, 0.25),
+    rgba(255, 122, 55, 0) 70%
+  );
+  filter: blur(45px);
+  z-index: -1;
+}
+
+.appointment-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.appointment-id {
+  font-weight: 600;
+  color: var(--color-primary-soft);
+}
+
+.appointment-status {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.appointment-status--confirmed {
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.appointment-status--pending {
+  border-color: var(--color-accent);
+  color: var(--color-accent-soft);
+}
+
+.appointment-body {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* --- Textos centrados --- */
+
+.centered-text {
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* --- Enlaces generales --- */
+
+a {
+  color: inherit;
+}
+
+/* --- Responsivo --- */
+
+@media (max-width: 640px) {
+  .navbar-inner {
+    flex-wrap: wrap;
+  }
+
+  .app-main {
+    padding: 20px 12px 30px;
+  }
+
+  .card {
+    padding: 20px 16px;
+  }
+
+  .appointments-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card-appointment {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 1.25rem;
+  background: radial-gradient(
+      circle at top left,
+      rgba(255, 122, 55, 0.18) 0,
+      rgba(19, 6, 31, 1) 55%,
+      rgba(7, 2, 18, 1) 100%
+    );
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.02),
+    0 0 28px rgba(255, 120, 200, 0.25);
+  transition:
+    opacity 0.25s ease-out,
+    transform 0.25s ease-out,
+    box-shadow 0.18s ease-out,
+    background 0.18s ease-out;
+}
+
+.card-appointment:hover {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 36px rgba(255, 120, 200, 0.45);
+  transform: translateY(-2px);
+}
+
+.card-appointment-deleting {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}
+
+
+.card-appointment-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.card-appointment-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #ff7a37;
+}
+
+.card-appointment-date {
+  font-size: 0.8rem;
+  text-transform: capitalize;
+  color: #c0b0ff;
+  opacity: 0.8;
+}
+
+.card-appointment-time {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.card-appointment-meta {
+  font-size: 0.9rem;
+  color: #d6c8ff;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  opacity: 0.9;
+}
+
+.dot-separator {
+  opacity: 0.5;
+}
+
+.card-appointment-cancel {
+  white-space: nowrap;
+}
+
+.btn.btn-outline-danger {
+  border: 1px solid #ff4e8a;
+  background: transparent;
+  color: #ff4e8a;
+  padding: 0.55rem 1.2rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease-out;
+}
+
+.btn.btn-outline-danger:hover {
+  background: radial-gradient(circle at top left, #ff7a37, #ff4e8a);
+  color: #0b0314;
+  box-shadow: 0 0 18px rgba(255, 120, 200, 0.35);
+}
+
+}
+

@@ -1,38 +1,44 @@
-import { Route } from "express"
-import Home from "./views/Home/Home"
-import MisTurnos from "./views/Home/Mis turnos/MisTurnos"
-import { useEffect } from "react";
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import CreateAppointment from "./pages/CreateAppointment";
+import MyAppointments from "./pages/MyAppointments";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import NotFound from "./pages/NotFound";
+import { useAuth } from "./context/AuthContext";
 
-function App() {
-
-  const [isLogged, setIsLogged] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if(!isLogged && location.pathname !=== "/login" && location.pathname !== "/register") {
-      navigate("/login");
-    }
-  }, [])
-  
+export default function App() {
+  const { isAuthenticated } = useAuth();
 
   return (
-    <>
-    <nav>
-      <ul>
-        <link to="/">Home</link>
-        <link to="/login">Login</link>
-        <link to="/register">Register</link>
-        <link to="/mis-turnos">Mis Turnos</link>
-      </ul>
-    </nav>
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/mis-turnos" element={<MisTurnos />} />
-    </Routes>
-    </>
-  )
-}
+    <div className="app-shell">
+      <Navbar />
+      <main className="app-main">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/appointments/me" replace />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
 
-export default App
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route path="/appointments/new" element={<CreateAppointment />} />
+            <Route path="/appointments/me" element={<MyAppointments />} />
+          </Route>
+
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+    </div>
+  );
+}
